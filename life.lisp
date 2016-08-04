@@ -122,37 +122,26 @@
 
 (defun number-of-neighbours (x y)
   "Will return the total number of active bordering cells."
-  (let ((counter 0))
-    (when (has-neighbour x y -1 +1) (setq counter(+ counter 1)))
-    (when (has-neighbour x y  0 +1) (setq counter(+ counter 1)))
-    (when (has-neighbour x y +1 +1) (setq counter(+ counter 1)))
+  (loop
+     for (dx dy)
+     in '((-1 +1) (+0 +1) (+1 +1)
+          (-1 +0)         (+1 +0)
+          (-1 -1) (+0 -1) (+1 -1))
+     count (has-neighbour x y dx dy)))
 
-    (when (has-neighbour x y -1 0) (setq counter(+ counter 1)))
-    (when (has-neighbour x y +1 0) (setq counter(+ counter 1)))
-    
-    (when (has-neighbour x y -1 -1) (setq counter(+ counter 1)))
-    (when (has-neighbour x y  0 -1) (setq counter(+ counter 1)))
-    (when (has-neighbour x y +1 -1) (setq counter(+ counter 1)))
-    counter))
-
-(defun dead-or-alive (x y)
+(defun alive (x y)
   "Use rules to set state of cells"
   (let ((alive (aref *board* x y)))
-    (cond
-      (alive
-       (if (< (number-of-neighbours x y) 2) (setq alive nil))
-       (if (> (number-of-neighbours x y) 3) (setq alive nil)))
-      (t
-       (if (= (number-of-neighbours x y) 3) (setq alive t))))
-    alive))
+    (if alive
+        (<= 2 (number-of-neighbours x y) 3)
+        (= (number-of-neighbours x y) 3))))
 
 (defun next-board ()
   "Generate next board"
   (let ((next-board (make-array (list board-width board-height) :initial-element nil)))
     (dotimes (x board-width)
       (dotimes (y board-height)
-        (setf (aref next-board x y)
-              (dead-or-alive x y))))
+        (setf (aref next-board x y) (alive x y))))
     (setf *board* next-board)
     nil))
 
