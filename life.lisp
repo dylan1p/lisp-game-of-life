@@ -113,57 +113,26 @@
   (not (and (<= 0 x (1- board-width))
             (<= 0 y (1- board-height)))))
 
-(defun has-left-neighbour (x y)
-  "Check if cell has left neighbour"
-  (if (not (check-out-of-bounds  (1- x) y))
-      (aref *board* (1- x) y)))
 
-(defun has-right-neighbour (x y)
-  "Check if cell has right neighbour"
-  (if (not (check-out-of-bounds  (1+ x) y))
-      (aref *board* (1+ x) y)))
+(defun has-neighbour (x y dx dy)
+  "Check if cell has neighbour"
+  (if (not (check-out-of-bounds  (+ x dx) (+ y dy)))
+      (aref *board* (+ x dx) (+ y dy))))
 
-(defun has-top-neighbour (x y)
-  "Check if cell has top neighbour"
-  (if (not (check-out-of-bounds  x (1+ y)))
-      (aref *board* x (1+ y))))
-
-(defun has-bottom-neighbour (x y)
-  "Check if cell has bottom neighbour"
-  (if (not (check-out-of-bounds  x (1- y)))
-      (aref *board* x (1- y))))
-
-(defun has-bottom-left-neighbour (x y)
-  "Check if cell has bottom right neighbour"
-  (if (not (check-out-of-bounds  (1- x) (1- y)))
-      (aref *board* (1- x) (1- y))))
-
-(defun has-bottom-right-neighbour (x y)
-  "Check if cell has bottom right neighbour"
-  (if (not (check-out-of-bounds  (1+ x) (1- y)))
-      (aref *board* (1+ x) (1- y))))
-
-(defun has-top-left-neighbour (x y)
-  "Check if cell has top neighbour"
-  (if (not (check-out-of-bounds  (1- x) (1+ y)))
-      (aref *board* (1- x) (1+ y))))
-
-(defun has-top-right-neighbour (x y)
-  "Check if cell has top neighbour"
-  (if (not (check-out-of-bounds  (1+ x) (1+ y)))
-      (aref *board* (1+ x) (1+ y))))
 
 (defun number-of-neighbours (x y)
   "Will return the total number of active bordering cells."
   (let ((counter 0))
-    (when (has-left-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-right-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-top-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-bottom-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-top-left-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-top-right-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-bottom-right-neighbour x y) (setq counter(+ counter 1)))
-    (when (has-bottom-left-neighbour x y) (setq counter(+ counter 1)))
+    (when (has-neighbour x y -1 +1) (setq counter(+ counter 1)))
+    (when (has-neighbour x y  0 +1) (setq counter(+ counter 1)))
+    (when (has-neighbour x y +1 +1) (setq counter(+ counter 1)))
+
+    (when (has-neighbour x y -1 0) (setq counter(+ counter 1)))
+    (when (has-neighbour x y +1 0) (setq counter(+ counter 1)))
+    
+    (when (has-neighbour x y -1 -1) (setq counter(+ counter 1)))
+    (when (has-neighbour x y  0 -1) (setq counter(+ counter 1)))
+    (when (has-neighbour x y +1 -1) (setq counter(+ counter 1)))
     counter))
 
 (defun dead-or-alive (x y)
